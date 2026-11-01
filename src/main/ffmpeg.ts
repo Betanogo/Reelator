@@ -3,7 +3,7 @@ import { app } from 'electron'
 import { createHash } from 'crypto'
 import { existsSync, mkdirSync } from 'fs'
 import { basename, extname, join } from 'path'
-import { pathToFileURL } from 'url'
+import { mediaUrl } from './protocol'
 import type { ExportStartOptions, ImportedMedia, MediaKind, ProbeResult } from '../shared/types'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -46,8 +46,8 @@ export async function probe(path: string): Promise<ProbeResult> {
   const duration = parseFloat(info.format?.duration ?? v?.duration ?? a?.duration ?? '0') || 0
 
   let kind: MediaKind
-  if (IMAGE_EXT.has(ext) && ext !== '.gif') kind = 'image'
-  else if (ext === '.gif') kind = duration > 0.15 ? 'video' : 'image'
+  // GIFs are shown as (animated) images; their duration is kept as the default clip length.
+  if (IMAGE_EXT.has(ext)) kind = 'image'
   else if (v && duration > 0) kind = 'video'
   else if (v && !a) kind = 'image'
   else if (a || AUDIO_EXT.has(ext)) kind = 'audio'
@@ -64,7 +64,7 @@ export async function probe(path: string): Promise<ProbeResult> {
 
   return {
     kind,
-    duration: kind === 'image' ? 0 : duration,
+    duration: kind === 'image' ? (ext === '.gif' ? duration : 0) : duration,
     width,
     height,
     fps: parseRate(v?.avg_frame_rate || v?.r_frame_rate),
@@ -92,7 +92,7 @@ async function makeThumbnail(path: string, p: ProbeResult): Promise<string | nul
       return null
     }
   }
-  return pathToFileURL(out).href
+  return mediaUrl(out)
 }
 
 export async function importMedia(paths: string[]): Promise<ImportedMedia[]> {

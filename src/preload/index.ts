@@ -1,5 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
-import { pathToFileURL } from 'url'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import type { ReelatorApi } from '../shared/types'
 
 const api: ReelatorApi = {
@@ -16,7 +15,10 @@ const api: ReelatorApi = {
   exportFinish: () => ipcRenderer.invoke('export:finish'),
   exportCancel: () => ipcRenderer.invoke('export:cancel'),
   showInFolder: (path) => ipcRenderer.invoke('shell:showInFolder', path),
-  toFileUrl: (path) => pathToFileURL(path).href
+  toFileUrl: (path) => `reel://file/${encodeURIComponent(path)}`,
+  getPathForFile: (file) => {
+    try { return webUtils.getPathForFile(file) } catch { return '' }
+  }
 }
 
 contextBridge.exposeInMainWorld('reelator', api)

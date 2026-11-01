@@ -15,7 +15,7 @@ export interface ProbeResult {
 export interface ImportedMedia extends ProbeResult {
   path: string
   name: string
-  thumbnail: string | null // file:// url of a jpg
+  thumbnail: string | null // reel:// url of a jpg
 }
 
 export interface ExportAudioInput {
@@ -52,5 +52,8 @@ export interface ReelatorApi {
   exportFinish(): Promise<void>
   exportCancel(): Promise<void>
   showInFolder(path: string): Promise<void>
+  /** reel:// URL the renderer can load a local file from (supports seeking). */
   toFileUrl(path: string): string
+  /** Absolute path of a File dropped from the OS (empty string if unknown). */
+  getPathForFile(file: File): string
 }

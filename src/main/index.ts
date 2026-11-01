@@ -2,7 +2,10 @@ import { app, BrowserWindow, dialog, ipcMain, shell, Menu } from 'electron'
 import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { ExportJob, importMedia } from './ffmpeg'
+import { handleScheme, registerSchemePrivileges } from './protocol'
 import type { ExportStartOptions } from '../shared/types'
+
+registerSchemePrivileges()
 
 let win: BrowserWindow | null = null
 let job: ExportJob | null = null
@@ -27,13 +30,26 @@ function createWindow(): void {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
       sandbox: false,
-      // Local media files are loaded straight from disk via file:// URLs.
+      // Media is read through the reel:// protocol; WebGL needs untainted frames.
       webSecurity: false,
       backgroundThrottling: false
     }
   })
   Menu.setApplicationMenu(null)
   win.on('closed', () => { win = null })
+
+  // The renderer blocks unload when there are unsaved changes; ask the user.
+  win.webContents.on('will-prevent-unload', (e) => {
+    const choice = dialog.showMessageBoxSync(win!, {
+      type: 'question',
+      buttons: ['저장하지 않고 종료', '취소'],
+      defaultId: 1,
+      cancelId: 1,
+      title: 'Reelator',
+      message: '저장하지 않은 변경 사항이 있어요. 종료할까요?'
+    })
+    if (choice === 0) e.preventDefault()
+  })
 
   if (process.env.ELECTRON_RENDERER_URL) win.loadURL(process.env.ELECTRON_RENDERER_URL)
   else win.loadFile(join(__dirname, '../renderer/index.html'))
@@ -104,6 +120,7 @@ ipcMain.handle('export:cancel', () => {
 ipcMain.handle('shell:showInFolder', (_e, path: string) => shell.showItemInFolder(path))
 
 app.whenReady().then(() => {
+  handleScheme()
   createWindow()
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

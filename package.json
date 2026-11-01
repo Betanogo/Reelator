@@ -43,7 +43,10 @@
     "files": [
       "out/**/*",
       "build/icon.png",
-      "package.json"
+      "package.json",
+      "!**/node_modules/ffprobe-static/bin/darwin/**",
+      "!**/node_modules/ffprobe-static/bin/linux/**",
+      "!**/node_modules/ffprobe-static/bin/win32/ia32/**"
     ],
     "asarUnpack": [
       "node_modules/ffmpeg-static/**",
@@ -53,21 +56,15 @@
       "target": [
         "nsis"
       ],
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "artifactName": "Reelator-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "shortcutName": "Reelator"
-    },
-    "fileAssociations": [
-      {
-        "ext": "reelator",
-        "name": "Reelator Project",
-        "description": "Reelator project file",
-        "icon": "build/icon.ico"
-      }
-    ]
+      "shortcutName": "Reelator",
+      "artifactName": "Reelator-Setup-${version}.${ext}"
+    }
   }
 }
