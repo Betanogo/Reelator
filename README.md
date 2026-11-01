@@ -2,9 +2,24 @@
 
 # Reelator
 
-캡컷 스타일의 개인용 Windows 영상 편집기. Electron + React + WebGL2 + FFmpeg.
+캡컷 스타일의 개인용 영상 편집기.
 
-## 설치
+- **폰 (안드로이드)**: 웹앱(PWA) — https://betanogo.github.io/Reelator/ 를 크롬으로 열고 ‘홈 화면에 추가’
+- **PC (Windows)**: Electron 데스크톱 앱 — 아래 설치 참고
+
+## 폰 앱 (mobile/)
+
+- 캡컷 모바일과 같은 세로 화면: 가운데 고정 플레이헤드, 손가락으로 스크롤해서 탐색, 두 손가락으로 확대/축소
+- 미디어는 앱 저장소(OPFS)에 복사돼서 프로젝트가 자동 저장되고 다시 열 수 있어요
+- 내보내기는 폰의 하드웨어 인코더(WebCodecs, Mediabunny)로 MP4를 만들고, 공유 버튼으로 갤러리 저장이나 메신저 전송
+- 트랜지션, 필터, 조정, 화면, 볼륨, 페이드, 비율, 배경은 PC 버전과 같은 엔진을 그대로 써요
+
+```bash
+npm run mobile:dev     # 폰에서 같은 와이파이로 접속해 테스트 (host 노출)
+npm run mobile:build   # mobile/dist
+```
+
+## PC 설치
 
 [Releases](../../releases)에서 `Reelator-Setup-x.y.z.exe`를 받아 실행하세요.
 코드 서명이 없어서 Windows SmartScreen이 뜨면 **추가 정보 → 실행**을 누르면 돼요.

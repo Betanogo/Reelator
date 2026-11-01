@@ -5,7 +5,6 @@ import { useEditor } from '../model/store'
 import { Layout, computeLayout, frameAt } from '../model/timeline'
 import { MediaItem, Project, frameSize } from '../model/types'
 
-const PREVIEW_SHORT_SIDE = 720
 const RESYNC = 0.3 // seconds of drift tolerated while playing
 
 /**
@@ -13,6 +12,8 @@ const RESYNC = 0.3 // seconds of drift tolerated while playing
  * keeps every <video>/<audio> element in step with the timeline and renders the frame.
  */
 export class PreviewEngine {
+  /** Short side of the preview render target (mobile uses less). */
+  static shortSide = 720
   private comp: Compositor
   private pool = new MediaPool(false)
   private raf = 0
@@ -26,7 +27,7 @@ export class PreviewEngine {
 
   constructor(canvas: HTMLCanvasElement) {
     const p = useEditor.getState().project
-    const [w, h] = frameSize(p.settings.aspect, PREVIEW_SHORT_SIDE)
+    const [w, h] = frameSize(p.settings.aspect, PreviewEngine.shortSide)
     this.comp = new Compositor(canvas, w, h)
     this.raf = requestAnimationFrame(this.tick)
   }
@@ -42,7 +43,7 @@ export class PreviewEngine {
       this.layout = computeLayout(p)
       this.layoutFor = p
       this.mediaById = new Map(p.media.map((m) => [m.id, m]))
-      const [w, h] = frameSize(p.settings.aspect, PREVIEW_SHORT_SIDE)
+      const [w, h] = frameSize(p.settings.aspect, PreviewEngine.shortSide)
       this.comp.resize(w, h)
       const keep = new Set<string>([...p.clips.map((c) => c.id), ...p.audio.map((a) => a.id)])
       for (const k of this.pool.prune(keep)) this.comp.release(`vid:${k}`)

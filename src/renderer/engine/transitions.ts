@@ -221,9 +221,9 @@ export const TRANSITIONS: TransitionDef[] = [
   {
     id: 'heart', name: '하트', category: '특수', ease: 'inOut', defaultDuration: 0.9,
     glsl: `vec4 transition(vec2 uv){
-      vec2 o = (uv - vec2(0.5, 0.42)) * vec2(uRatio, 1.0) / max(uProgress * 1.9, 1e-4);
-      o.y = -o.y;
-      float x = o.x * 1.1, y = o.y * 1.1 + 0.15;
+      // uv.y points up in GL, so the lobes of the implicit heart curve sit on top
+      vec2 o = (uv - vec2(0.5, 0.5)) * vec2(uRatio, 1.0) / max(uProgress * 1.9, 1e-4);
+      float x = o.x * 1.1, y = o.y * 1.1 + 0.1;
       float h = pow(x * x + y * y - 0.3, 3.0) - x * x * y * y * y;
       return h < 0.0 ? getTo(uv) : getFrom(uv);
     }`

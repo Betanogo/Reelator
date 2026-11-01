@@ -135,10 +135,10 @@ export class Compositor {
   private targets: [Target, Target] | null = null
   private blackTex: WebGLTexture
 
-  constructor(readonly canvas: HTMLCanvasElement, width: number, height: number) {
+  constructor(readonly canvas: HTMLCanvasElement, width: number, height: number, opts: { preserveDrawingBuffer?: boolean } = {}) {
     const gl = canvas.getContext('webgl2', {
       alpha: false, antialias: false, depth: false, stencil: false,
-      premultipliedAlpha: false, preserveDrawingBuffer: false, powerPreference: 'high-performance'
+      premultipliedAlpha: false, preserveDrawingBuffer: !!opts.preserveDrawingBuffer, powerPreference: 'high-performance'
     })
     if (!gl) throw new Error('WebGL2를 사용할 수 없어요')
     this.gl = gl

@@ -13,7 +13,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "start": "electron-vite preview",
     "dist": "electron-vite build && electron-builder --win --x64 --publish never",
-    "test:export": "node scripts/test-export-pipeline.mjs"
+    "test:export": "node scripts/test-export-pipeline.mjs",
+    "mobile:dev": "vite --config mobile/vite.config.ts",
+    "mobile:build": "vite build --config mobile/vite.config.ts"
   },
   "dependencies": {
     "ffmpeg-static": "^5.2.0",
@@ -27,6 +29,7 @@
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
     "electron-vite": "^2.3.0",
+    "mediabunny": "^1.65.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.7.2",
