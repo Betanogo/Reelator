@@ -9,7 +9,8 @@ export class MediaPool {
   private images = new Map<string, HTMLImageElement>()
   private audios = new Map<string, HTMLAudioElement>()
 
-  constructor(private muted: boolean) {}
+  /** `onFrame` is called whenever an element has a new frame to show (load / seek done). */
+  constructor(private muted: boolean, private onFrame?: () => void) {}
 
   video(key: string, path: string): HTMLVideoElement {
     let v = this.videos.get(key)
@@ -20,6 +21,10 @@ export class MediaPool {
       v.muted = this.muted
       v.src = window.reelator.toFileUrl(path)
       v.dataset.path = path
+      if (this.onFrame) {
+        v.addEventListener('seeked', this.onFrame)
+        v.addEventListener('loadeddata', this.onFrame)
+      }
       this.videos.set(key, v)
     } else if (v.dataset.path !== path) {
       v.src = window.reelator.toFileUrl(path)
@@ -34,6 +39,7 @@ export class MediaPool {
       img = new Image()
       img.decoding = 'async'
       img.src = window.reelator.toFileUrl(path)
+      if (this.onFrame) img.addEventListener('load', this.onFrame)
       this.images.set(path, img)
     }
     return img

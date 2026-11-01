@@ -6,6 +6,7 @@ import { PreviewEngine } from '@shared/engine/preview'
 import { MobileTimeline } from './MobileTimeline'
 import { SheetKind, Sheets, exportState } from './Sheets'
 import { pickFiles, storeFiles } from './platform'
+import { MobileScrubber } from './scrub'
 import { pushLayer, back } from './nav'
 import {
   IconAdjust, IconBack, IconCopy, IconEffect, IconFade, IconFilter, IconLeft, IconMusic, IconPalette, IconPause, IconPlay,
@@ -13,6 +14,7 @@ import {
 } from './micons'
 
 PreviewEngine.shortSide = 540
+PreviewEngine.scrub = new MobileScrubber()
 
 /** Pick files and put them on the timeline (videos/photos on the main track, music on the audio track). */
 export async function importAndPlace(accept?: string): Promise<void> {
